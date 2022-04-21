@@ -3,8 +3,8 @@ package controllers
 import (
 	"github.com/RocketsLab/gofiber-and-gorm-api/http/repositories"
 	"github.com/RocketsLab/gofiber-and-gorm-api/http/requests"
-	"github.com/RocketsLab/gofiber-and-gorm-api/http/service"
 	"github.com/RocketsLab/gofiber-and-gorm-api/models"
+	"github.com/RocketsLab/gofiber-and-gorm-api/services"
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -16,7 +16,7 @@ func (c *AuthController) Login(ctx *fiber.Ctx) error {
 	var user models.User
 
 	_ = ctx.BodyParser(&data)
-	result := service.DbConnection.Where("email = ?", data.Email).First(&user)
+	result := services.DbConnection.Where("email = ?", data.Email).First(&user)
 	if err := result.Error; err != nil {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "password or user not match",
@@ -31,17 +31,17 @@ func (c *AuthController) Login(ctx *fiber.Ctx) error {
 		})
 	}
 
-	session, err := service.GetSessionStore(ctx)
+	session, err := services.GetSessionStore(ctx)
 	if err != nil {
-		return service.SessionError(ctx, err)
+		return services.SessionError(ctx, err)
 	}
 
-	session.Set(service.AuthKey, true)
-	session.Set(service.UserId, user.ID)
+	session.Set(services.AuthKey, true)
+	session.Set(services.UserId, user.ID)
 
 	err = session.Save()
 	if err != nil {
-		return service.SessionError(ctx, err)
+		return services.SessionError(ctx, err)
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
@@ -52,14 +52,14 @@ func (c *AuthController) Login(ctx *fiber.Ctx) error {
 
 func (c *AuthController) Logout(ctx *fiber.Ctx) error {
 
-	session, err := service.GetSessionStore(ctx)
+	session, err := services.GetSessionStore(ctx)
 	if err != nil {
-		return service.SessionNotFound(ctx)
+		return services.SessionNotFound(ctx)
 	}
 
 	err = session.Destroy()
 	if err != nil {
-		return service.SessionError(ctx, err)
+		return services.SessionError(ctx, err)
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{

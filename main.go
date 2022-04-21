@@ -2,16 +2,16 @@ package main
 
 import (
 	"github.com/RocketsLab/gofiber-and-gorm-api/application"
-	"github.com/RocketsLab/gofiber-and-gorm-api/http/service"
 	"github.com/RocketsLab/gofiber-and-gorm-api/routes"
+	"github.com/RocketsLab/gofiber-and-gorm-api/services"
 	"log"
 )
 
 func main() {
 
-	service.StartSession()
+	services.StartSession()
 
-	service.InitDatabase()
+	services.InitDatabase()
 
 	application.Start()
 

@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"github.com/RocketsLab/gofiber-and-gorm-api/http/service"
+	"github.com/RocketsLab/gofiber-and-gorm-api/services"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -18,14 +18,14 @@ func sessionAuthMiddleware(ctx *fiber.Ctx) error {
 		return ctx.Next()
 	}
 
-	session, err := service.SessionStore.Get(ctx)
+	session, err := services.SessionStore.Get(ctx)
 	if err != nil {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "not authenticated",
 		})
 	}
 
-	if session.Get(service.AuthKey) == nil {
+	if session.Get(services.AuthKey) == nil {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "not authenticated",
 		})

@@ -1,4 +1,4 @@
-package service
+package services
 
 import (
 	"github.com/RocketsLab/gofiber-and-gorm-api/models"
