@@ -5,6 +5,7 @@ import (
 	"github.com/RocketsLab/gofiber-and-gorm-api/http/repositories"
 	"github.com/RocketsLab/gofiber-and-gorm-api/http/requests"
 	"github.com/RocketsLab/gofiber-and-gorm-api/models"
+	"github.com/RocketsLab/gofiber-and-gorm-api/services"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -56,6 +57,26 @@ func (c *UserController) Show(ctx *fiber.Ctx) error {
 	fmt.Println(user, err)
 	return ctx.JSON(fiber.Map{
 		"user":    user,
+		"message": "OK",
+	})
+}
+
+func (c *UserController) Destroy(ctx *fiber.Ctx) error {
+	user, err := repositories.UserFindByID(ctx.Params("user"))
+	if err != nil {
+		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "user not found",
+		})
+	}
+	fmt.Println(user, err)
+	result := services.DbConnection.Delete(&user)
+	if err = result.Error; err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "failed to delete user",
+		})
+	}
+
+	return ctx.JSON(fiber.Map{
 		"message": "OK",
 	})
 }

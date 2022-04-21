@@ -13,6 +13,7 @@ func RegisterWebRoutes() {
 	userController := controllers.UserController{}
 	router.Get("/users", userController.Index)
 	router.Post("/users", userController.Store)
+	router.Delete("/users/:user", userController.Destroy)
 	router.Get("/users/:user", userController.Show)
 
 	//AUTH
